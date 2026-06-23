@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>services</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="logo">
+      <a href="index.html">
+        <img src="pdg.png" alt="Company Logo">
+      </a>
+    </div>
+
+    <nav class="navigation">
+      <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#about-PDG">About</a></li>
+        <li><a href="#services-section" class="active-nav">Services</a></li>
+        <li><a href="#contact-section">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-cta">
+      <a href="#services-section" class="btn">Get an appointment</a>
+    </div>
+  </header>
+
+  <section id="services-section" class="services-container">
+    <h2 class="services-title">Our Exclusive Shows & Performances</h2>
+    <p class="services-subtitle">From traditional steps to magical musical productions, we bring spectacular entertainment to life.</p>
+    
+    <div class="services-grid">
+      <a href="#" class="open-popup-btn" data-show="Cultural Dance">
+        <div class="service-card">
+          <div class="service-icon">🎭</div>
+          <h3>Cultural Dance</h3>
+          <p>Rich traditions brought to life through authentic traditional choreography, music, and striking heritage costumes.</p>
+        </div>
+      </a>
+
+      <a href="#" class="open-popup-btn" data-show="Hip-Hop & Urban">
+        <div class="service-card">
+          <div class="service-icon">⚡</div>
+          <h3>Hip-Hop & Urban</h3>
+          <p>High-energy, fast-paced street dance routines packed with intense rhythm, synchronization, and modern style.</p>
+        </div>
+      </a>
+
+      <a href="#" class="open-popup-btn" data-show="Contemporary">
+        <div class="service-card">
+          <div class="service-icon">🍃</div>
+          <h3>Contemporary</h3>
+          <p>A beautiful, fluid fusion of storytelling and expressive modern dance that perfectly captures raw emotion.</p>
+        </div>
+      </a>
+
+      <a href="#" class="open-popup-btn" data-show="Ballroom Showcase">
+        <div class="service-card">
+          <div class="service-icon">💃</div>
+          <h3>Ballroom Showcase</h3>
+          <p>Elegant, classic partner dancing featuring sophisticated Waltzes, fiery Tangos, and upbeat Cha-Chas.</p>
+        </div>
+      </a>
+
+      <a href="#" class="open-popup-btn" data-show="Jazz Production">
+        <div class="service-card">
+          <div class="service-icon">🎷</div>
+          <h3>Jazz Production</h3>
+          <p>Bold, theatrical dance arrangements brimming with high kicks, broad expressions, and classic Broadway energy.</p>
+        </div>
+      </a>
+
+      <a href="#" class="open-popup-btn" data-show="Fairies & Royalty">
+        <div class="service-card magical-card">
+          <div class="service-icon">✨</div>
+          <h3>Fairies & Royalty</h3>
+          <p>A magical musical stage performance featuring live singing from beloved Disney-style Princes, Princesses, and enchanting fairies.</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <footer id="contact-section" class="site-footer">
+    <div class="footer-content">
+      
+      <div class="footer-column">
+        <h3>Project Dance Guild</h3>
+        <p>Elevating passion, rhythm, and expression through world-class dance instruction.</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>Quick Links</h3>
+        <ul class="quick-links-list">
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="index.html#about-PDG">About</a></li>
+          <li><a href="#services-section">Services</a></li>
+        </ul>
+
+        <div class="social-container">
+          <a href="https://facebook.com" target="_blank" class="social-icon fb" title="Facebook"><span>f</span></a>
+          <a href="https://instagram.com" target="_blank" class="social-icon ig" title="Instagram"><span>📸</span></a>
+          <a href="https://tiktok.com" target="_blank" class="social-icon tt" title="TikTok"><span>🎵</span></a>
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h3>Contact Us</h3>
+        <p>📍 123 Dance Studio Lane</p>
+        <p>📞 +1 (555) 019-2834</p>
+        <p>✉️ info@projectdanceguild.com</p>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 Project Dance Guild. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <div id="appointment-popup" class="popup-overlay">
+    <div class="popup-box">
+      <button type="button" id="close-appointment" class="close-popup">&times;</button>
+      
+      <div id="popup-form-content">
+        <h2>Book an Appointment</h2>
+        <p>Secure your slot for our <span id="dynamic-show-name" style="color: #dfba6b; font-weight: bold;">Dance</span> Show / Class.</p>
+        
+        <form class="popup-form">
+          <input type="text" placeholder="Your Full Name" required>
+          <input type="email" placeholder="Your Email Address" required>
+         <input 
+  type="tel" 
+  placeholder="Your Phone Number (e.g., 09123456789)" 
+  pattern="09[0-9]{9}" 
+  maxlength="11"
+  title="Phone number must start with 09 and be exactly 11 digits long."
+  oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+  required
+>
+          <input type="text" placeholder="Pick a date" onfocus="(this.type='date')" onblur="if(!this.value) this.type='text'" required>
+          <button type="submit" class="popup-submit-btn">Submit Booking</button>
+        </form>
+      </div>
+
+      <div id="popup-success-content" style="display: none; padding: 20px 0;">
+        <div class="success-checkmark" style="font-size: 60px; color: #dfba6b; margin-bottom: 15px;">✨</div>
+        <h2 style="color: #dfba6b;">Booking Request Sent!</h2>
+        <p style="color: #ffffff; font-size: 16px; margin: 15px 0 25px 0; line-height: 1.6;">
+          Thank you, <span id="success-client-name" style="font-weight: bold; color: #dfba6b;">Guest</span>! Your reservation request for our 
+          <span id="success-show-name" style="font-weight: bold; color: #dfba6b;">Dance Production</span> has been successfully sent to the Guild.
+        </p>
+        <button type="button" id="success-done-btn" class="popup-submit-btn">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const popupOverlay = document.getElementById('appointment-popup');
+    const closeBtn = document.getElementById('close-appointment');
+    const dynamicShowSpan = document.getElementById('dynamic-show-name');
+    const allCards = document.querySelectorAll('.open-popup-btn');
+    
+    const formContent = document.getElementById('popup-form-content');
+    const successContent = document.getElementById('popup-success-content');
+    const bookingForm = document.querySelector('.popup-form');
+    const dateInput = document.querySelector('input[placeholder="Pick a date"]');
+    
+    const successClientSpan = document.getElementById('success-client-name');
+    const successShowSpan = document.getElementById('success-show-name');
+    const successDoneBtn = document.getElementById('success-done-btn');
+
+    allCards.forEach(card => {
+      card.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        formContent.style.display = 'block';
+        successContent.style.display = 'none';
+        closeBtn.style.display = 'block';
+        
+        const chosenShow = this.getAttribute('data-show');
+        dynamicShowSpan.textContent = chosenShow;
+        
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+        
+        popupOverlay.classList.add('active');
+      });
+    });
+
+    function hideModal() { popupOverlay.classList.remove('active'); }
+    closeBtn.addEventListener('click', hideModal);
+    successDoneBtn.addEventListener('click', hideModal);
+    popupOverlay.addEventListener('click', function(event) {
+      if (event.target === popupOverlay) { hideModal(); }
+    });
+
+    bookingForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const clientName = this.querySelector('input[type="text"]').value;
+      const targetedShow = dynamicShowSpan.textContent;
+      
+      successClientSpan.textContent = clientName;
+      successShowSpan.textContent = targetedShow;
+      
+      formContent.style.display = 'none';
+      closeBtn.style.display = 'none';
+      successContent.style.display = 'block';
+      
+      bookingForm.reset();
+      dateInput.type = 'text';
+    });
+  </script>
+
+</body>
+</html>
