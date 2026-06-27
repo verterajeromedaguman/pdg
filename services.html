@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>services</title>
+    <title>Services - PDG</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,7 +25,8 @@
     </nav>
 
     <div class="header-cta">
-      <a href="#services-section" class="btn">Get an appointment</a>
+      <!-- Triggers the T&C Pop-up with a blank text layout (keeps option clear) -->
+      <button id="openModalBtn" class="btn" data-show="">Get an appointment</button>
     </div>
   </header>
 
@@ -34,59 +35,57 @@
     <p class="services-subtitle">From traditional steps to magical musical productions, we bring spectacular entertainment to life.</p>
     
     <div class="services-grid">
-      <a href="#" class="open-popup-btn" data-show="Cultural Dance">
-        <div class="service-card">
+      
+        <div class="service-card cultural-card" data-show="Cultural Dance Production">
           <div class="service-icon">🎭</div>
-          <h3>Cultural Dance</h3>
-          <p>Rich traditions brought to life through authentic traditional choreography, music, and striking heritage costumes.</p>
+          <h3>Cultural Dance Production</h3>
+          <p>Traditional and cultural dance presentation masterpieces.</p>
         </div>
       </a>
 
-      <a href="#" class="open-popup-btn" data-show="Hip-Hop & Urban">
-        <div class="service-card">
+      
+        <div class="service-card" data-show="Hip-Hop & Urban Showcase">
           <div class="service-icon">⚡</div>
-          <h3>Hip-Hop & Urban</h3>
-          <p>High-energy, fast-paced street dance routines packed with intense rhythm, synchronization, and modern style.</p>
+          <h3>Hip-Hop & Urban Showcase</h3>
+          <p>High-energy urban choreography routines.</p>
         </div>
       </a>
 
-      <a href="#" class="open-popup-btn" data-show="Contemporary">
-        <div class="service-card">
+      
+        <div class="service-card" data-show="Contemporary">
           <div class="service-icon">🍃</div>
           <h3>Contemporary</h3>
           <p>A beautiful, fluid fusion of storytelling and expressive modern dance that perfectly captures raw emotion.</p>
         </div>
       </a>
 
-      <a href="#" class="open-popup-btn" data-show="Ballroom Showcase">
-        <div class="service-card">
+      
+        <div class="service-card" data-show="Ballroom Showcase">
           <div class="service-icon">💃</div>
           <h3>Ballroom Showcase</h3>
           <p>Elegant, classic partner dancing featuring sophisticated Waltzes, fiery Tangos, and upbeat Cha-Chas.</p>
         </div>
       </a>
 
-      <a href="#" class="open-popup-btn" data-show="Jazz Production">
-        <div class="service-card">
+      
+        <div class="service-card" data-show="Jazz Production">
           <div class="service-icon">🎷</div>
           <h3>Jazz Production</h3>
           <p>Bold, theatrical dance arrangements brimming with high kicks, broad expressions, and classic Broadway energy.</p>
         </div>
       </a>
 
-      <a href="#" class="open-popup-btn" data-show="Fairies & Royalty">
-        <div class="service-card magical-card">
+      
+        <div class="service-card magical-card" data-show="Fairies & Royalty">
           <div class="service-icon">✨</div>
           <h3>Fairies & Royalty</h3>
           <p>A magical musical stage performance featuring live singing from beloved Disney-style Princes, Princesses, and enchanting fairies.</p>
         </div>
       </a>
     </div>
-  </section>
-
+</section>
   <footer id="contact-section" class="site-footer">
     <div class="footer-content">
-      
       <div class="footer-column">
         <h3>Project Dance Guild</h3>
         <p>Elevating passion, rhythm, and expression through world-class dance instruction.</p>
@@ -113,106 +112,122 @@
         <p>📞 +1 (555) 019-2834</p>
         <p>✉️ info@projectdanceguild.com</p>
       </div>
-
     </div>
 
     <div class="footer-bottom">
       <p>&copy; 2026 Project Dance Guild. All Rights Reserved.</p>
     </div>
+
+
+    
   </footer>
 
-  <div id="appointment-popup" class="popup-overlay">
-    <div class="popup-box">
-      <button type="button" id="close-appointment" class="close-popup">&times;</button>
+  <!-- Terms & Conditions Pop-up Modal Element (Updated with Messenger Transaction Policy) -->
+  <div id="bookingModal" class="modal-overlay">
+    <div class="modal-card">
+      <button type="button" id="closeModalBtn" class="modal-close">&times;</button>
       
-      <div id="popup-form-content">
-        <h2>Book an Appointment</h2>
-        <p>Secure your slot for our <span id="dynamic-show-name" style="color: #dfba6b; font-weight: bold;">Dance</span> Show / Class.</p>
-        
-        <form class="popup-form">
-          <input type="text" placeholder="Your Full Name" required>
-          <input type="email" placeholder="Your Email Address" required>
-         <input 
-  type="tel" 
-  placeholder="Your Phone Number (e.g., 09123456789)" 
-  pattern="09[0-9]{9}" 
-  maxlength="11"
-  title="Phone number must start with 09 and be exactly 11 digits long."
-  oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-  required
->
-          <input type="text" placeholder="Pick a date" onfocus="(this.type='date')" onblur="if(!this.value) this.type='text'" required>
-          <button type="submit" class="popup-submit-btn">Submit Booking</button>
-        </form>
+      <h2>📅 Appointment Summary & Booking Terms</h2>
+      <p class="modal-subtitle">You are about to book: <span id="dynamic-show-name" style="color: #dfba6b; font-weight: bold;">Dance Service</span></p>
+      
+      <div class="terms-box">
+        <h3>🔒 Project Dance Guild (PDG) Policies</h3>
+        <ul>
+          <li><strong>Down Payment:</strong> A strict <strong>50% down payment fee</strong> is mandatory upfront. To ensure a fast and efficient booking experience, this transaction is handled entirely through <strong>Facebook Messenger</strong>, where you can easily coordinate with us and send a copy of your receipt.</li>
+          <li><strong>💬 Messenger Transactions:</strong> For a more seamless and efficient transaction, down payment coordination is entirely processed over <strong>Facebook Messenger</strong>. Once your appointment request is placed, you will drop your down payment details and send your generated receipt copy straight to our Messenger inbox.</li>
+          <li><strong>Personal Onboarding Profile:</strong> You must present authentic personal details alongside a valid identity document (ID).</li>
+          <li><strong>Logistical Service Scope:</strong> You will declare your exact chosen core target dance service class together with your explicit venue and background event details.</li>
+        </ul>
       </div>
 
-      <div id="popup-success-content" style="display: none; padding: 20px 0;">
-        <div class="success-checkmark" style="font-size: 60px; color: #dfba6b; margin-bottom: 15px;">✨</div>
-        <h2 style="color: #dfba6b;">Booking Request Sent!</h2>
-        <p style="color: #ffffff; font-size: 16px; margin: 15px 0 25px 0; line-height: 1.6;">
-          Thank you, <span id="success-client-name" style="font-weight: bold; color: #dfba6b;">Guest</span>! Your reservation request for our 
-          <span id="success-show-name" style="font-weight: bold; color: #dfba6b;">Dance Production</span> has been successfully sent to the Guild.
-        </p>
-        <button type="button" id="success-done-btn" class="popup-submit-btn">Done</button>
-      </div>
+      <!-- Agreement Checkbox -->
+      <label class="checkbox-container">
+        <input type="checkbox" id="termsCheckbox">
+        <span class="checkmark"></span>
+        I fully agree to the 50% down payment terms via Messenger and structural booking rules.
+      </label>
+
+      <!-- Access Action Button Redirector -->
+      <button id="availBtn" class="btn-avail" disabled>Avail Appointment</button>
     </div>
   </div>
 
   <script>
-    const popupOverlay = document.getElementById('appointment-popup');
-    const closeBtn = document.getElementById('close-appointment');
-    const dynamicShowSpan = document.getElementById('dynamic-show-name');
-    const allCards = document.querySelectorAll('.open-popup-btn');
     
-    const formContent = document.getElementById('popup-form-content');
-    const successContent = document.getElementById('popup-success-content');
-    const bookingForm = document.querySelector('.popup-form');
-    const dateInput = document.querySelector('input[placeholder="Pick a date"]');
+  const modal = document.getElementById("bookingModal");
+  const openModalBtn = document.getElementById("openModalBtn");
+  const closeModalBtn = document.getElementById("closeModalBtn");
+  const termsCheckbox = document.getElementById("termsCheckbox");
+  const availBtn = document.getElementById("availBtn");
+  const dynamicShowSpan = document.getElementById("dynamic-show-name");
+  
+  // FIXED: Adjusted target selector to cleanly intercept both card layouts
+  const serviceCards = document.querySelectorAll(".service-card, .open-popup-btn");
+
+  let selectedService = "";
+
+  // Centralized Modal Open Configurator Engine
+  function openModal(serviceName) {
+    // If data-show attribute is completely missing, default to empty string
+    selectedService = serviceName || "";
     
-    const successClientSpan = document.getElementById('success-client-name');
-    const successShowSpan = document.getElementById('success-show-name');
-    const successDoneBtn = document.getElementById('success-done-btn');
+    // Update heading text safely or provide placeholder if header button clicked
+    if (selectedService === "") {
+      dynamicShowSpan.textContent = "General Booking Queue";
+    } else {
+      dynamicShowSpan.textContent = selectedService + " Performance";
+    }
+    
+    // Reset checkbox state
+    termsCheckbox.checked = false;
+    availBtn.disabled = true;
+    
+    modal.classList.add("active");
+  }
 
-    allCards.forEach(card => {
-      card.addEventListener('click', function(event) {
-        event.preventDefault(); 
-        formContent.style.display = 'block';
-        successContent.style.display = 'none';
-        closeBtn.style.display = 'block';
-        
-        const chosenShow = this.getAttribute('data-show');
-        dynamicShowSpan.textContent = chosenShow;
-        
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.setAttribute('min', today);
-        
-        popupOverlay.classList.add('active');
-      });
+  // Header Call To Action Click Handler Event Interceptor
+  if (openModalBtn) {
+    openModalBtn.addEventListener("click", () => {
+      openModal(openModalBtn.getAttribute("data-show"));
     });
+  }
 
-    function hideModal() { popupOverlay.classList.remove('active'); }
-    closeBtn.addEventListener('click', hideModal);
-    successDoneBtn.addEventListener('click', hideModal);
-    popupOverlay.addEventListener('click', function(event) {
-      if (event.target === popupOverlay) { hideModal(); }
+  // Connect ALL service cards to toggle modal
+  serviceCards.forEach(card => {
+    card.addEventListener("click", function(e) {
+      e.preventDefault();
+      // Safe fallback extraction for data-show attribute targets
+      openModal(this.getAttribute("data-show"));
     });
+  });
 
-    bookingForm.addEventListener('submit', function(event) {
-      event.preventDefault();
-      const clientName = this.querySelector('input[type="text"]').value;
-      const targetedShow = dynamicShowSpan.textContent;
-      
-      successClientSpan.textContent = clientName;
-      successShowSpan.textContent = targetedShow;
-      
-      formContent.style.display = 'none';
-      closeBtn.style.display = 'none';
-      successContent.style.display = 'block';
-      
-      bookingForm.reset();
-      dateInput.type = 'text';
+  // Close Modal View Triggers
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", () => modal.classList.remove("active"));
+  }
+  
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.remove("active");
+  });
+
+  // Toggle Avail Button state based on Checkbox status
+  if (termsCheckbox) {
+    termsCheckbox.addEventListener("change", function() {
+      availBtn.disabled = !this.checked;
     });
-  </script>
+  }
 
+  // Cache setting to local memory and safely push browser routing location forward
+  if (availBtn) {
+    availBtn.addEventListener("click", () => {
+      if (selectedService !== "") {
+        localStorage.setItem("pdg_selected_service", selectedService);
+      } else {
+        localStorage.removeItem("pdg_selected_service"); // Keeps field blank if chosen via header button
+      }
+      window.location.href = "appointment.html";
+    });
+  }
+</script>
 </body>
 </html>

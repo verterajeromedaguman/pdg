@@ -3,9 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>apointment</title>
+    <title>Book an Appointment - PDG</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
+
+  <header class="site-header">
+    <div class="logo">
+      <a href="index.html">
+        <img src="pdg.png" alt="Company Logo">
+      </a>
+    </div>
+
+    <nav class="navigation">
+      <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#about-PDG">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="#contact-section">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-cta">
+      <a href="index.html" class="btn">Back to Home</a>
+    </div>
+  </header>
+
+  <main class="form-section-container">
+    <div id="appointment-form-view">
+      <h2>🎟️ Complete Your Booking Request</h2>
+      <p class="subtitle">Provide your exact logistical info and identity documents to verify your studio schedule slot.</p>
+      
+      <form id="mainBookingForm" class="booking-form-grid" onsubmit="event.preventDefault(); openConfirmationModal();">
+        <div class="form-group">
+          <label for="clientName">Full Name</label>
+          <input type="text" id="clientName" placeholder="John Doe" pattern="^[a-zA-Z\s\.\-]+$" title="Please enter a valid name using letters only." oninput="this.value = this.value.replace(/[^a-zA-Z\s\.\-]/g, '');" required>
+        </div>
+
+        <div class="form-group">
+          <label for="clientEmail">Email Address</label>
+          <input type="email" id="clientEmail" placeholder="johndoe@example.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address structure (e.g., name@domain.com)." required>
+        </div>
+
+
+<div class="form-group">
+  <label for="eventName">Event Name</label>
+  <input type="text" id="eventName" name="eventName" placeholder="Event Name" required>
+</div>
+
+
+        <div class="form-group">
+          <label for="clientPhone">Phone Number</label>
+          <input type="tel" id="clientPhone" placeholder="09123456789" pattern="09[0-9]{9}" maxlength="11" title="Phone number must start with 09 and be exactly 11 digits long." oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+        </div>
+
+        <div class="form-group">
+          <label for="bookingDate">Event Schedule Date</label>
+          <input type="date" id="bookingDate" required>
+        </div>
+
+        <div class="form-group full-width-field">
+          <label for="serviceSelect">Selected Performance / Class Type</label>
+          <select id="serviceSelect" required>
+            <option value="">Select a performance style...</option>
+            <option value="cultural">🎭 Cultural Dance Production</option>
+            <option value="hiphop">⚡ Hip-Hop & Urban Showcase</option>
+            <option value="contemporary">🍃 Contemporary Performance</option>
+            <option value="ballroom">💃 Ballroom Showcase</option>
+            <option value="jazz">🎷 Jazz Production</option>
+            <option value="magical">✨ Fairies & Royalty Stage Musical</option>
+          </select>
+        </div>
+
+        <div class="address-time-row">
+          <div class="form-group">
+            <label for="eventVenue">Exact Event Venue & Address</label>
+            <input type="text" id="eventVenue" placeholder="Studio Room / Street Address" required>
+          </div>
+          <div class="form-group">
+            <label for="eventTime">Time of the Event</label>
+            <input type="time" id="eventTime" required>
+          </div>
+        </div>
+
+        <div class="form-group full-width-field">
+          <label for="customRequests">Logistics / Other Details or Specific Requests</label>
+          <textarea id="customRequests" rows="4" placeholder="Type here any specific logistical instructions, audio setups, dress codes, or extra preferences you need us to note..." style="width: 100%; padding: 12px; background-color: #1a1a1a; border: 1px solid #444444; border-radius: 4px; color: #ffffff; font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#dfba6b'" onblur="this.style.borderColor='#444444'"></textarea>
+        </div>
+
+        <div class="form-group full-width-field">
+          <label>Upload Identity Document (ID / Verification File)</label>
+          <div class="upload-dropzone" onclick="document.getElementById('fileUpload').click()">
+            <div class="upload-icon">📁</div>
+            <p>Click or Drag & Drop file here to upload</p>
+            <input type="file" id="fileUpload" required onchange="updateFileStatus(this)">
+            <div class="file-status-text" id="fileStatus">No file selected (Required)</div>
+          </div>
+        </div>
+
+        <div class="form-submit-row full-width-field">
+          <button type="submit" class="submit-appointment-btn">Proceed to Booking Terms</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="success-panel-view" class="success-card-panel" style="display: none;">
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='80' height='80'><text y='0.9em' font-size='90'>🎉</text></svg>" alt="Success" class="success-icon" style="display:block; margin: 0 auto 20px auto;">
+      <h2>Appointment Successfully Placed!</h2>
+      <p class="subtitle" style="text-align: center !important; margin: 20px auto !important;">
+        Thank you, <strong id="displayClientName" style="color:#dfba6b;"></strong>. Your booking entry has been accepted into our schedule ledger. 50% down payment fee is mandatory upfront. To ensure a fast and efficient booking experience, this transaction is handled entirely through Facebook Messenger, where you can easily coordinate with us and send a copy of your receipt. Your downloadable invoice receipt is compiled and ready below.
+      </p>
+
+      <div style="text-align: center; margin: 20px auto; max-width: 600px; background-color: #1a1a1a; padding: 20px; border-radius: 6px; border: 1px dashed #dfba6b;">
+        <p style="color: #ffffff; margin: 0; font-size: 1.1rem;">📄 Your customized booking sheet receipt has been compiled!</p>
+        <p style="color: #aaaaaa; margin: 5px 0 0 0; font-size: 0.9rem;">Click the download button below to save it as a PDF document on your device.</p>
+      </div>
+
+      <div id="pdg-invoice-receipt" style="background-color: #ffffff !important; color: #1c1c1c !important; padding: 40px; border-radius: 4px; width: 600px; margin: 0 auto; border-top: 10px solid #dfba6b; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-shadow: none; position: absolute; left: -9999px; top: -9999px; box-sizing: border-box;">
+        
+        <div style="text-align: center !important; border-bottom: 2px dashed #cccccc !important; padding-bottom: 20px !important; margin-bottom: 25px !important; width: 100% !important; display: block !important; clear: both !important;">
+          <div style="margin-bottom: 12px !important; display: block !important; text-align: center !important; width: 100% !important;">
+            <img src="pdg.png" alt="PDG Logo" style="max-height: 85px !important; width: auto !important; display: inline-block !important; vertical-align: middle !important;">
+          </div>
+          <h2 style="margin: 10px 0 5px 0 !important; padding: 0 !important; color: #141414 !important; font-size: 2rem !important; text-transform: uppercase !important; letter-spacing: 1px !important; font-weight: 800 !important; font-family: Arial, sans-serif !important; text-align: center !important; position: static !important; display: block !important; width: 100% !important; background: none !important; opacity: 1 !important; visibility: visible !important;">
+  Project Dance Guild
+</h2>
+          <div style="background-color: #2c2c2c !important; color: #ffffff !important; padding: 8px 16px !important; border-radius: 4px !important; display: inline-block !important; margin-top: 10px !important; font-weight: bold !important; font-size: 0.85rem !important; letter-spacing: 2px !important; text-transform: uppercase !important; text-align: center !important; position: static !important;">
+            OFFICIAL BOOKING RECEIPT
+          </div>
+        </div>
+        
+        <table style="width: 100% !important; border-collapse: collapse !important; font-size: 1rem !important; color: #333333 !important;">
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; width: 40% !important; text-align: left !important;">Client Name:</td><td id="pdfName" style="padding: 12px 0 !important; text-align: right !important; font-weight: bold !important; color: #141414 !important;"></td></tr>
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; text-align: left !important;">Email Address:</td><td id="pdfEmail" style="padding: 12px 0 !important; text-align: right !important; color: #141414 !important;"></td></tr>
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; text-align: left !important;">Phone Number:</td><td id="pdfPhone" style="padding: 12px 0 !important; text-align: right !important; color: #141414 !important;"></td></tr>
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; text-align: left !important;">Service Booked:</td><td id="pdfService" style="padding: 12px 0 !important; text-align: right !important; color: #b18e3a !important; font-weight: bold !important;"></td></tr>
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; text-align: left !important;">Schedule Date:</td><td id="pdfDate" style="padding: 12px 0 !important; text-align: right !important; color: #141414 !important;"></td></tr>
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; text-align: left !important;">Event Time:</td><td id="pdfTime" style="padding: 12px 0 !important; text-align: right !important; color: #141414 !important;"></td></tr>
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; text-align: left !important;">Event Venue:</td><td id="pdfVenue" style="padding: 12px 0 !important; text-align: right !important; color: #141414 !important;"></td></tr>
+          <tr style="border-bottom: 1px solid #eeeeee !important;"><td style="padding: 12px 0 !important; font-weight: bold !important; color: #666666 !important; vertical-align: top !important; text-align: left !important;">Special Requests:</td><td id="pdfRequests" style="padding: 12px 0 !important; text-align: right !important; color: #141414 !important; line-height: 1.4 !important; word-break: break-word !important; white-space: pre-wrap !important;"></td></tr>
+        </table>
+
+        <div style="margin-top: 35px !important; padding: 15px !important; background-color: #fcf8e3 !important; border: 1px solid #faebcc !important; border-radius: 4px !important; font-size: 0.9rem !important; color: #8a6d3b !important; text-align: center !important; line-height: 1.5 !important;">
+          <strong>Important Notice:</strong> This document acts as processing structural proof. A mandatory 50% initial down payment balance allocation must be validated over our Facebook Messenger channels to lock this requested schedule calendar slot.
+        </div>
+      </div>
+      <div style="display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 30px;">
+        <button class="btn" style="background-color: #dfba6b; color: #141414; padding: 12px 24px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;" onclick="generateReceiptPDF()">
+          📥 Download Receipt PDF
+        </button>
+        <a href="https://www.facebook.com/PDGENTERTAINMENTPRODUCTION" target="_blank" class="btn" style="background-color: #0084FF; color: #ffffff; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px;">
+          💬 Contact via Messenger
+        </a>
+        <a href="index.html" class="btn" style="background: transparent; border: 1px solid #dfba6b; color: #dfba6b; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 4px;">
+          Return to Homepage
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="confirmationModal">
+    <div class="modal-card" style="border: 2px solid #dfba6b; background-color: #1a1a1a; max-width: 500px; padding: 40px 30px; border-radius: 8px; text-align: center;">
+      <h2 style="color: #dfba6b; font-size: 1.6rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;">Final Booking Confirmation</h2>
+      <p style="color: #ffffff; font-weight: 500; font-size: 1.05rem; margin-bottom: 20px;">Please make sure all information is correct.</p>
+      
+      <div style="background-color: #111111; padding: 20px; border-radius: 6px; border-left: 3px solid #dfba6b; text-align: left; margin-bottom: 30px; line-height: 1.6; color: #dddddd; font-size: 0.95rem;">
+        <strong>Down Payment:</strong> A strict 50% down payment fee is mandatory upfront. To ensure a fast and efficient booking experience, this transaction is handled entirely through <strong>Facebook Messenger</strong>, where you can easily coordinate with us and send a copy of your receipt.
+      </div>
+
+      <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+        <button type="button" style="flex: 1; padding: 12px 24px; background: transparent; border: 1px solid #888888; color: #aaaaaa; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;" onclick="backToFormView()">Back</button>
+        <button type="button" style="flex: 1; padding: 12px 24px; background-color: #dfba6b; border: 1px solid #dfba6b; color: #141414; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;" onclick="proceedToSuccessView()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer" id="contact-section">
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3>Project Dance Guild</h3>
+        <p>Elevating passion, rhythm, and expression through world-class dance instruction.</p>
+      </div>
+      <div class="footer-column">
+        <h3>Quick Links</h3>
+        <ul class="quick-links-list">
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="index.html#about-PDG">About</a></li>
+          <li><a href="services.html">Services</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Contact Us</h3>
+        <p>📍 123 Dance Studio Lane</p>
+        <p>📞 +1 (555) 019-2834</p>
+        <p>✉️ info@projectdanceguild.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Project Dance Guild. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('bookingDate');
+    if (dateInput) {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      let mm = today.getMonth() + 1;
+      let dd = today.getDate();
+      if (mm < 10) mm = '0' + mm;
+      if (dd < 10) dd = '0' + dd;
+      dateInput.setAttribute('min', `${yyyy}-${mm}-${dd}`);
+    }
+
+    const savedService = localStorage.getItem("pdg_selected_service");
+    const selectDropdown = document.getElementById('serviceSelect');
+    if (savedService && selectDropdown) {
+      for (let i = 0; i < selectDropdown.options.length; i++) {
+        let option = selectDropdown.options[i];
+        if (option.value.toLowerCase().includes(savedService.toLowerCase()) || 
+            option.text.toLowerCase().includes(savedService.toLowerCase())) {
+          selectDropdown.selectedIndex = i;
+          break;
+        }
+      }
+      localStorage.removeItem("pdg_selected_service");
+    }
+  });
+
+  function openConfirmationModal() {
+    const confirmModal = document.getElementById('confirmationModal');
+    if (confirmModal) confirmModal.classList.add('active');
+  }
+
+  function backToFormView() {
+    const confirmModal = document.getElementById('confirmationModal');
+    if (confirmModal) confirmModal.classList.remove('active');
+  }
+
+  function updateFileStatus(input) {
+    const statusText = document.getElementById('fileStatus');
+    if (!statusText) return;
+    if (input.files.length > 0) {
+      statusText.innerText = "✓ " + input.files[0].name;
+      statusText.style.color = "#dfba6b";
+    } else {
+      statusText.innerText = "No file selected (Required)";
+      statusText.style.color = "#aaaaaa";
+    }
+  }
+
+  function proceedToSuccessView() {
+    // 1. Dismiss the terms verification modal overlay cleanly
+    const confirmModal = document.getElementById('confirmationModal');
+    if (confirmModal) confirmModal.classList.remove('active');
     
+    // 2. Extract user input values directly from the input DOM nodes
+    const nameVal = document.getElementById('clientName').value;
+    const emailVal = document.getElementById('clientEmail').value;
+    const eventNameVal = document.getElementById('eventName').value;
+    const phoneVal = document.getElementById('clientPhone').value;
+    const dateVal = document.getElementById('bookingDate').value;
+    const venueVal = document.getElementById('eventVenue').value;
+    const timeVal = document.getElementById('eventTime').value;
+    const requestsVal = document.getElementById('customRequests').value;
+    
+    const svcSel = document.getElementById('serviceSelect');
+    const serviceVal = svcSel.options[svcSel.selectedIndex] ? svcSel.options[svcSel.selectedIndex].text : "Not Selected";
+
+    // 3. Map values onto the display panels and hidden high-contrast PDF document structure
+    document.getElementById('displayClientName').innerText = nameVal || "Valued Client";
+    document.getElementById('pdfName').innerText = nameVal || "-";
+    document.getElementById('pdfEmail').innerText = emailVal || "-";
+    document.getElementById('pdfPhone').innerText = phoneVal || "-";
+    document.getElementById('pdfService').innerText = serviceVal || "-";
+    document.getElementById('pdfDate').innerText = dateVal || "-";
+    document.getElementById('pdfTime').innerText = timeVal || "-";
+    document.getElementById('pdfVenue').innerText = venueVal || "-";
+    document.getElementById('pdfRequests').innerText = requestsVal.trim() ? requestsVal : "None Specified";
+    
+    // 4. Swap display viewport panel visibility instantly to show the success view
+    document.getElementById('appointment-form-view').style.display = 'none';
+    document.getElementById('success-panel-view').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // =================================================================
+    // AUTOMATED BACKGROUND GENERATION & REST API TRANSMISSION LINK
+    // =================================================================
+    const element = document.getElementById('pdg-invoice-receipt');
+    
+    // Temporarily bring the hidden element into the active flow layer for html2pdf to read
+    element.style.position = 'static';
+    element.style.left = '0';
+    element.style.top = '0';
+
+    const pdfOptions = {
+      margin:       15,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Use outputPdf to convert the canvas layout directly into a data URI string 
+    html2pdf().set(pdfOptions).from(element).outputPdf('datauristring').then((pdfBase64String) => {
+      
+      // Immediately place the layout back into hidden safety spaces
+      element.style.position = 'absolute';
+      element.style.left = '-9999px';
+      element.style.top = '-9999px';
+
+      console.log("PDF data stream successfully compiled. Transmitting data to backend router...");
+
+      // Send the data package over to your running local Node.js server
+      fetch('http://localhost:3000/api/send-receipt', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        // ✅ UPDATED BODY PAYLOAD: Now sends all inputs to MongoDB!
+        body: JSON.stringify({
+          email: emailVal,
+          clientName: nameVal,
+          eventName: eventNameVal,
+          phone: phoneVal,
+          serviceBooked: serviceVal, 
+          scheduleDate: dateVal,
+          eventTime: timeVal,
+          eventVenue: venueVal,
+          specialRequests: requestsVal.trim() ? requestsVal : "None Specified",
+          pdfBase64: pdfBase64String
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if(data.success) {
+          console.log("✨ Success! Auto-confirmation copy dispatched to client inbox: " + emailVal);
+        } else {
+          console.warn("Server responded but internal SMTP rejected delivery: ", data.message);
+        }
+      })
+      .catch(err => {
+        console.error("Transmission failed. Make sure your 'node server.js' terminal window is still running open: ", err);
+      });
+    });
+  }
+
+  function generateReceiptPDF() {
+    const element = document.getElementById('pdg-invoice-receipt');
+    const clientName = document.getElementById('clientName').value || 'Booking';
+    
+    element.style.position = 'static';
+    element.style.left = '0';
+    element.style.top = '0';
+
+    const options = {
+      margin:       15,
+      filename:     `PDG_Receipt_${clientName.replace(/\s+/g, '_')}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(options).from(element).save().then(() => {
+      element.style.position = 'absolute';
+      element.style.left = '-9999px';
+      element.style.top = '-9999px';
+    });
+  }
+  </script>
 </body>
 </html>

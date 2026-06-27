@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDG Management Dashboard</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>🎭 Project Dance Guild — Admin Dashboard</h1>
+    <div class="action-bar">
+      <div class="badge" id="booking-count">Total Bookings: 0</div>
+      <button onclick="handleAdminLogout()" class="btn-logout">Log Out</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('bookings', this)">📋 Bookings</button>
+    <button class="tab-btn" onclick="switchTab('staff', this)">👥 Staff Management</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       TAB 1: BOOKINGS
+  ════════════════════════════════════════════════ -->
+  <div id="tab-bookings" class="tab-panel active">
+
+    <div class="filter-bar">
+      <select id="filter-status" onchange="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <input type="text" id="filter-search" placeholder="Search client or event..." oninput="applyFilters()">
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Email</th>
+            <th>Event</th>
+            <th>Service</th>
+            <th>Date & Time</th>
+            <th>Venue</th>
+            <th>Assigned Staff</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ledger-rows"></tbody>
+      </table>
+      <div id="empty-state" class="no-data" style="display:none;">No bookings found.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       TAB 2: STAFF MANAGEMENT
+  ════════════════════════════════════════════════ -->
+  <div id="tab-staff" class="tab-panel">
+
+    <!-- Add Staff Form -->
+    <div class="add-staff-form">
+  <h3>➕ Add New Staff Member</h3>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input type="text" id="new-staff-name" placeholder="Full Name">
+      
+      <label style="margin-top: 10px; display: block;">Phone Number</label>
+      <input type="text" id="new-staff-phone" placeholder="09XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    </div>
+    
+    <div class="form-group">
+      <label>Upload Staff Photo</label>
+      <div id="drop-zone" style="border: 2px dashed #444; padding: 20px; text-align: center; cursor: pointer; border-radius: 8px; color: #aaa;" 
+           onclick="document.getElementById('file-input').click()">
+        <div style="font-size: 2rem;">📁</div>
+        <p>Click or Drag & Drop file here to upload</p>
+        <input type="file" id="file-input" style="display: none;" accept="image/*">
+        <p id="file-status" style="font-size: 0.8rem; margin-top: 10px;">No file selected</p>
+      </div>
+    </div>
+    
+    <div class="form-group" style="margin-top: 14px;">
+      <label>Available Roles</label>
+      <div class="roles-checkboxes">
+        <label class="role-check"><input type="checkbox" value="Lead Dancer"> Lead Dancer</label>
+        <label class="role-check"><input type="checkbox" value="Backup Dancer"> Backup Dancer</label>
+        <label class="role-check"><input type="checkbox" value="Choreographer"> Choreographer</label>
+        <label class="role-check"><input type="checkbox" value="Stage Manager"> Stage Manager</label>
+        <label class="role-check"><input type="checkbox" value="Costume Handler"> Costume Handler</label>
+        <label class="role-check"><input type="checkbox" value="Other"> Other</label>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top: 18px;">
+    <button class="btn-primary" onclick="addStaff()">Add Staff Member</button>
+  </div>
+</div>
+
+    <!-- Staff Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Available Roles</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="staff-rows"></tbody>
+      </table>
+      <div id="staff-empty" class="no-data" style="display:none;">No staff members added yet.</div>
+    </div>
+
+  </div>
+  <!-- ↑ tab-staff closes here — modals are OUTSIDE all tab panels below -->
+
+  <!-- ═══════════════════════════════════════════════
+       ASSIGN STAFF MODAL
+  ════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="assignModal">
+    <div class="modal-card" style="position:relative;">
+      <button class="modal-close-btn" onclick="closeAssignModal()">✕</button>
+      <h3>👥 Assign Staff</h3>
+      <p class="modal-subtitle" id="modal-booking-label">Select staff members and their roles for this booking.</p>
+      <div id="assign-rows-container"></div>
+      <button class="btn-add-row" onclick="addAssignRow()">+ Add Another Staff Member</button>
+      <div class="modal-actions">
+        <button class="btn" style="background:transparent; border:1px solid #555; color:#aaa;" onclick="closeAssignModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveStaffAssignment()">Save Assignment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PHOTO MODAL
+  ════════════════════════════════════════════════ -->
+  <div id="photoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background:#1a1a1a; padding:20px; border-radius:8px; max-width:500px; text-align:center;">
+      <button onclick="document.getElementById('photoModal').style.display='none'" style="float:right; cursor:pointer; background:none; border:none; color:#fff; font-size:18px;">✕</button>
+      <h3 style="color:#dfba6b;">Staff Identity</h3>
+      <img id="modalImage" src="" style="max-width:100%; height:auto; margin-top:15px; border:2px solid #dfba6b;">
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SCRIPTS — inside body, after all HTML
+  ════════════════════════════════════════════════ -->
+  <script>
+    // ── SECURITY ──────────────────────────────────────────────
+    (function() {
+      if (localStorage.getItem("pdg_admin_session") !== "authenticated_active") {
+        alert("Unauthorized Access.");
+        window.location.href = "login.html";
+      }
+    })();
+
+    // ── GLOBALS ───────────────────────────────────────────────
+    let allBookings  = [];
+    let allStaff     = [];
+    let currentBookingId = null;
+
+    // ── INIT ──────────────────────────────────────────────────
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchBookings();
+      fetchStaff();
+    });
+
+    // ── TABS ──────────────────────────────────────────────────
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  BOOKINGS
+    // ══════════════════════════════════════════════════════════
+    async function fetchBookings() {
+      try {
+        const res    = await fetch('http://localhost:3000/api/admin/bookings');
+        const result = await res.json();
+        if (result.success) {
+          allBookings = result.data;
+          applyFilters();
+          document.getElementById("booking-count").innerText = `Total Bookings: ${allBookings.length}`;
+        }
+      } catch (e) { console.error("Error fetching bookings:", e); }
+    }
+
+    function applyFilters() {
+      const statusFilter = document.getElementById('filter-status').value;
+      const searchFilter = document.getElementById('filter-search').value.toLowerCase();
+      const filtered = allBookings.filter(b => {
+        const matchStatus = !statusFilter || b.status === statusFilter;
+        const matchSearch = !searchFilter ||
+          b.clientName.toLowerCase().includes(searchFilter) ||
+          (b.eventName || '').toLowerCase().includes(searchFilter);
+        return matchStatus && matchSearch;
+      });
+      renderBookings(filtered);
+    }
+
+    function renderBookings(bookings) {
+      const tbody = document.getElementById("ledger-rows");
+      const empty = document.getElementById("empty-state");
+      tbody.innerHTML = "";
+      if (bookings.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      bookings.forEach(b => {
+        let staffHTML = '<span style="color:#555;font-size:12px;">Unassigned</span>';
+        if (b.assignedStaff && b.assignedStaff.length > 0) {
+          staffHTML = `<div class="staff-tags">` +
+            b.assignedStaff.map(s =>
+              `<span class="staff-tag">${s.name} <span>· ${s.role}</span></span>`
+            ).join('') +
+          `</div>`;
+        }
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><strong>${b.clientName}</strong></td>
+          <td>${b.email}</td>
+          <td>${b.eventName || 'Untitled'}</td>
+          <td>${b.serviceBooked}</td>
+          <td>${b.scheduleDate} at ${b.eventTime}</td>
+          <td>${b.eventVenue}</td>
+          <td>${staffHTML}</td>
+          <td>
+            <select class="status-select" onchange="updateStatus('${b._id}', this.value)">
+              <option value="Pending"   ${b.status==='Pending'   ? 'selected':''}>Pending</option>
+              <option value="Confirmed" ${b.status==='Confirmed' ? 'selected':''}>Confirmed</option>
+              <option value="Completed" ${b.status==='Completed' ? 'selected':''}>Completed</option>
+              <option value="Cancelled" ${b.status==='Cancelled' ? 'selected':''}>Cancelled</option>
+            </select>
+          </td>
+          <td style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-assign" onclick="openAssignModal('${b._id}', '${b.clientName}', '${b.eventName || ''}')">👥 Assign</button>
+            <button class="btn btn-delete" onclick="deleteBooking('${b._id}', '${b.clientName}')">🗑 Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        await fetch(`http://localhost:3000/api/admin/bookings/status/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        fetchBookings();
+      } catch (e) { console.error("Status update failed:", e); }
+    }
+
+    async function deleteBooking(id, name) {
+      if (!confirm(`Delete booking for "${name}"?`)) return;
+      try {
+        const response = await fetch(`http://localhost:3000/api/admin/bookings/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+          alert("Booking deleted successfully!");
+          fetchBookings();
+        } else {
+          const errData = await response.json();
+          alert("Delete failed: " + (errData.message || "Unknown error"));
+        }
+      } catch (e) {
+        console.error("Network error during delete:", e);
+        alert("Could not connect to server.");
+      }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  ASSIGN STAFF MODAL
+    // ══════════════════════════════════════════════════════════
+    function openAssignModal(bookingId, clientName, eventName) {
+      console.log("DEBUG: Assign clicked for Booking ID:", bookingId);
+      if (!bookingId || bookingId === "undefined") {
+        console.error("ERROR: No valid booking ID provided to openAssignModal");
+        alert("Error: Unable to load booking details.");
+        return;
+      }
+      currentBookingId = bookingId;
+      document.getElementById('modal-booking-label').innerText =
+        `Assigning staff for: ${clientName} — ${eventName}`;
+
+      const booking = allBookings.find(b => b._id === bookingId);
+      const existing = (booking && booking.assignedStaff) ? booking.assignedStaff : [];
+      const container = document.getElementById('assign-rows-container');
+      container.innerHTML = '';
+      if (existing.length > 0) {
+        existing.forEach(s => addAssignRow(s.name, s.role));
+      } else {
+        addAssignRow();
+      }
+      document.getElementById('assignModal').classList.add('open');
+      console.log("DEBUG: Modal opened, currentBookingId set to:", currentBookingId);
+    }
+
+    function closeAssignModal() {
+      document.getElementById('assignModal').classList.remove('open');
+      currentBookingId = null;
+    }
+
+    function addAssignRow(selectedName = '', selectedRole = '') {
+      const container = document.getElementById('assign-rows-container');
+      const row = document.createElement('div');
+      row.className = 'assign-row';
+      const staffOptions = allStaff.map(s =>
+        `<option value="${s.name}" ${s.name === selectedName ? 'selected' : ''}>${s.name}</option>`
+      ).join('');
+      const roleOptions = ['Lead Dancer','Backup Dancer','Choreographer','Stage Manager','Costume Handler','Other']
+        .map(r => `<option value="${r}" ${r === selectedRole ? 'selected' : ''}>${r}</option>`)
+        .join('');
+      row.innerHTML = `
+        <select class="staff-name-select">
+          <option value="">— Select Staff —</option>
+          ${staffOptions}
+        </select>
+        <select class="staff-role-select">
+          <option value="">— Select Role —</option>
+          ${roleOptions}
+        </select>
+        <button class="remove-row" onclick="this.parentElement.remove()">✕</button>
+      `;
+      container.appendChild(row);
+    }
+
+    async function saveStaffAssignment() {
+      const rows = document.querySelectorAll('#assign-rows-container .assign-row');
+      const assignments = [];
+      for (const row of rows) {
+        const name = row.querySelector('.staff-name-select').value;
+        const role = row.querySelector('.staff-role-select').value;
+        if (!name || !role) {
+          alert('Please select both a staff member and a role for each row, or remove the empty row.');
+          return;
+        }
+        assignments.push({ name, role });
+      }
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/bookings/${currentBookingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assignedStaff: assignments })
+        });
+        const result = await res.json();
+        if (result.success) {
+          closeAssignModal();
+          fetchBookings();
+        } else {
+          alert('Failed to save: ' + result.message);
+        }
+      } catch (e) {
+        console.error("Assignment save failed:", e);
+      }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  STAFF MANAGEMENT
+    // ══════════════════════════════════════════════════════════
+    async function fetchStaff() {
+      try {
+        const res = await fetch('http://localhost:3000/api/staff');
+        const result = await res.json();
+        if (result.success) {
+          allStaff = result.data;
+          renderStaff(allStaff);
+        } else {
+          console.error("Server returned success: false", result.message);
+        }
+      } catch (e) {
+        console.error("Error fetching staff:", e);
+        alert("Could not load staff list. Check terminal.");
+      }
+    }
+
+    function renderStaff(staffList) {
+      const tbody = document.getElementById('staff-rows');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      staffList.forEach(s => {
+        const rolesHTML = s.availableRoles?.map(r => `<span class="staff-tag">${r}</span>`).join(' ') || 'None';
+        const imageUrl = s.imageUrl || '';
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${s.name}</strong></td>
+          <td>${s.phone || '—'}</td>
+          <td><div class="staff-tags">${rolesHTML}</div></td>
+          <td>
+            <button class="btn" onclick="showStaffPhoto('${imageUrl}')">View Photo</button>
+            <button class="btn-danger" onclick="removeStaff('${s._id}')">Remove</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    async function addStaff() {
+      const nameInput  = document.getElementById('new-staff-name');
+      const phoneInput = document.getElementById('new-staff-phone');
+      const fileInput  = document.getElementById('file-input');
+      if (!nameInput || !phoneInput || !fileInput) {
+        alert('Error: Form fields missing in HTML. Please check your IDs.');
+        return;
+      }
+      const name  = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const phoneRegex = /^09\d{9}$/;
+      const roles = [...document.querySelectorAll('.roles-checkboxes input:checked')].map(c => c.value);
+      
+if (!/^09\d{9}$/.test(phone)) {
+    alert("Invalid phone number! It must start with '09' and be exactly 11 digits.");
+    return;
+  }
+
+      if (!name || !fileInput.files[0]) {
+        alert('Name and Profile Picture are required.');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('phone', phone);
+      formData.append('roles', JSON.stringify(roles));
+      formData.append('staffPhoto', fileInput.files[0]);
+      try {
+        const res = await fetch('http://localhost:3000/api/staff', { method: 'POST', body: formData });
+        const result = await res.json();
+        if (res.ok) {
+          nameInput.value  = '';
+          phoneInput.value = '';
+          fileInput.value  = '';
+          document.getElementById('file-status').innerText = 'No file selected';
+          fetchStaff();
+        } else {
+          alert('Server Error: ' + result.message);
+        }
+      } catch (e) {
+        console.error("Upload failed:", e);
+        alert("Connection failed. Ensure server is running.");
+      }
+    }
+
+    function showStaffPhoto(url) {
+  
+  if (!url || url === 'undefined') {
+      alert("No photo available for this staff member.");
+      return;
+  }
+  
+  const modal = document.getElementById('photoModal');
+  const img = document.getElementById('modalImage');
+  img.src = url;
+  modal.style.display = 'flex';
+}
+
+    async function removeStaff(id) {
+      if (!confirm('Are you sure you want to remove this staff member?')) return;
+      try {
+        const res = await fetch(`http://localhost:3000/api/staff/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+          alert("Staff removed!");
+          fetchStaff();
+        } else {
+          alert("Error: " + result.message);
+        }
+      } catch (e) {
+        console.error("Delete failed:", e);
+      }
+    }
+
+    // ── AUTH ──────────────────────────────────────────────────
+    function handleAdminLogout() {
+      localStorage.removeItem("pdg_admin_session");
+      window.location.href = "login.html";
+    }
+
+
+
+    
+  </script>
+
+</body>
+</html>
